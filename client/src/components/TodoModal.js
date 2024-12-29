@@ -5,6 +5,7 @@ const TodoModal = ({ isOpen, todo, closeModal, saveTodo }) => {
   const [subtitle, setSubtitle] = useState('');
   const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState('No file chosen');
+  const [imageURL, setImageURL] = useState(null);
 
   useEffect(() => {
     if (todo) {
@@ -12,6 +13,7 @@ const TodoModal = ({ isOpen, todo, closeModal, saveTodo }) => {
       setSubtitle(todo.subtitle || '');
       setImage(todo.image || null);
       setImageName(todo.image ? 'Image selected' : 'No file chosen');
+      setImageURL(todo.image || null); 
     }
   }, [todo]);
 
@@ -19,11 +21,15 @@ const TodoModal = ({ isOpen, todo, closeModal, saveTodo }) => {
     const file = e.target.files[0];
     setImage(file);
     setImageName(file ? file.name : 'No file chosen');
+    if (file) {
+      setImageURL(URL.createObjectURL(file)); 
+    }
   };
 
   const handleRemoveImage = () => {
     setImage(null);
     setImageName('No file chosen');
+    setImageURL(null);
   };
 
   const handleSubmit = (e) => {
@@ -32,7 +38,7 @@ const TodoModal = ({ isOpen, todo, closeModal, saveTodo }) => {
       id: todo ? todo.id : null,
       title,
       subtitle,
-      image: image ? URL.createObjectURL(image) : null,
+      image: image ? imageURL : null, 
     };
     saveTodo(newTodo);
     clearForm();  
@@ -43,6 +49,7 @@ const TodoModal = ({ isOpen, todo, closeModal, saveTodo }) => {
     setSubtitle('');
     setImage(null);
     setImageName('No file chosen');
+    setImageURL(null); 
   };
 
   const handleClose = () => {
@@ -95,6 +102,15 @@ const TodoModal = ({ isOpen, todo, closeModal, saveTodo }) => {
                 >
                   Remove Image
                 </button>
+              </div>
+            )}
+            {imageURL && (
+              <div className="mb-4">
+                <img
+                  src={imageURL}
+                  alt="Preview"
+                  className="w-32 h-32 rounded"
+                />
               </div>
             )}
             <div className="mb-4">
